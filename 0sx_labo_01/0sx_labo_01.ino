@@ -19,12 +19,11 @@ void eteint_allume(){
 }
 
 void variation(){
-  delay(3000);
    Serial.println("Etat : Varie – 2305238");
 
   for (int i=0; i<255;i++){
      analogWrite(led, i); 
-       delay(8); 
+       delay(8); s
 
   }
   }
