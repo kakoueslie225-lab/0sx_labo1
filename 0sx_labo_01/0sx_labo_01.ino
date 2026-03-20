@@ -1,49 +1,32 @@
-
-int led= LED_BUILTIN;
-int position=0;
+int pinBouton = 2; // Pin du bouton
+int ledPin=9;
 void setup() {
-  // put your setup code here, to run once:
-Serial.begin(9600);
-pinMode(led, OUTPUT);
+  Serial.begin(9600);
+  pinMode(pinBouton, INPUT_PULLUP);
 }
 
-
-void eteint_allume(){
-  Serial.println("Etat: Allume - 2305238");
-  digitalWrite(led,LOW);
-  delay(300);
-  digitalWrite(led,HIGH);
-  delay(2000);
-  digitalWrite(led,LOW);
-  delay(1000);
-}
-
-void variation(){
-   Serial.println("Etat : Varie – 2305238");
-
-  for (int i=0; i<255;i++){
-     analogWrite(led, i); 
-       delay(8); s
-
-  }
-  }
-void clignotement(){
-   Serial.println("Etat: CLignotement - 2305238");
-
-   for (int i = 0; i < 2; i++) {
-    digitalWrite(led, LOW);
-    delay(350);
-    digitalWrite(led, HIGH);
-    delay(350);
-   }
-   
-}
 void loop() {
-  // put your main code here, to run repeatedly:
-switch(position){
-   case 0: eteint_allume();position++;break;
-   case 1: variation(); position++;break;
-   case 2: clignotement();position=0; break;
-  
-}
+  static int etatPrecedent = HIGH; // État initial cohérent avec INPUT_PULLUP
+  static int etat = HIGH; // État stable du bouton
+  const int delai = 50; // Délai anti-rebond en ms
+  static unsigned long dernierChangement = 0; // Dernier changement d'état
+
+  int etatPresent = digitalRead(pinBouton); // Lecture de l'état du capteur
+
+  if (etatPresent != etatPrecedent) { // Si l'état change
+    dernierChangement = millis(); // Mise à jour du temps
+    if(etatPresent==1){
+     digitalWrite (ledPin,HIGH);
+    }
+    else  {
+    digitalWrite (ledPin,LOW);
+    }
+  }
+
+  if ((millis() - dernierChangement) > delai && etatPresent != etat) { 
+    etat = etatPresent; // Mise à jour de l’état stable
+    Serial.println(etat); // Affichage
+  }
+
+  etatPrecedent = etatPresent; // Mise à jour pour la prochaine itération
 }
